@@ -1,9 +1,6 @@
 # --- Data and Large Files ---
 # Ignore the massive datasets and raw inputs
 raw_data/
-data/
-# probe/
-probe/build_index.csv
 
 # # --- Logs and Cluster Output ---
 # # Ignores the job output files (e.g., kebiolm_eval_BioASQ.e13001968)
