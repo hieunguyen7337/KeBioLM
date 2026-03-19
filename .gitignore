@@ -23,11 +23,18 @@ env/
 # model/
 model/KeBioLM.zip
 model/pytorch_model.bin
+model/entity.jsonl
 
 # --- OS & IDE ---
 .DS_Store
 .vscode/
 .idea/
 
-data/Phos_dataset/cleaned_phosphorylation_corpus.json
-data/Unified_PPI/Unified_PPI_dataset_clean.json
+# Ignore most data folders to save space
+data/*
+
+# Keep only several small size folders
+!data/BIOSSES/
+!data/NCBI-disease/
+!data/GAD/
+
