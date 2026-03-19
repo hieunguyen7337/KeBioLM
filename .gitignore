@@ -28,3 +28,6 @@ model/pytorch_model.bin
 .DS_Store
 .vscode/
 .idea/
+
+.data/Phos_dataset/cleaned_phosphorylation_corpus.json
+.data/Unified_PPI/Unified_PPI_dataset_clean.json
