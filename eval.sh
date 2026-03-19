@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #PBS -N kebiolm_eval_unified_ppi
 #PBS -l walltime=10:00:00
-#PBS -l mem=16gb
+#PBS -l mem=64gb
 #PBS -l ncpus=1
 #PBS -l ngpus=1
 #PBS -j eo
@@ -18,7 +18,7 @@ MAX_SEQ_LENGTH="${MAX_SEQ_LENGTH:-256}"
 EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-4}"
 EVAL_ACCUMULATION_STEPS="${EVAL_ACCUMULATION_STEPS:-1}"
 CONDA_ENV_NAME="${CONDA_ENV_NAME:-kebiolm_py38}"
-RUN_DEBUG="${RUN_DEBUG:-1}"
+RUN_DEBUG="${RUN_DEBUG:-0}"
 
 export ROOT_DIR
 export MODEL_PATH
