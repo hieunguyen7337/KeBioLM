@@ -315,7 +315,10 @@ class KebioModel(BertPreTrainedModel):
     for bid, labels in enumerate(mention_detection_labels):
       result_starts, result_ends = [], []
       prev_label = None
-      for position in range(1, lengths[bid]):
+      # Guard against rare shape mismatches between the padded input length
+      # and the returned mention label sequence.
+      max_label_positions = min(lengths[bid], len(labels))
+      for position in range(1, max_label_positions):
         label = labels[position]
         if label == 1 or (label == 2 and (not prev_label or prev_label == 0)):
           result_starts.append(position)

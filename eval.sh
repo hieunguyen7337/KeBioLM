@@ -38,8 +38,8 @@ echo '=========='
 echo 'Load CUDA & cuDNN modules'
 echo '=========='
 if command -v module >/dev/null 2>&1; then
-  module load CUDA/12.6.0 || true
-  module load cuDNN/9.5.0.50-CUDA-12.6.0 || true
+  module load CUDA/12.6.0 >/dev/null 2>&1 || echo 'CUDA/12.6.0 module not found; continuing'
+  module load cuDNN/9.5.0.50-CUDA-12.6.0 >/dev/null 2>&1 || echo 'cuDNN/9.5.0.50-CUDA-12.6.0 module not found; continuing'
 else
   echo 'module command not found; skipping module load'
 fi
