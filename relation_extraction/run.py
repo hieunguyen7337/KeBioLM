@@ -14,8 +14,8 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
-from relation_extraction_classification import BertForRelationExtraction 
-from utils import RelationExtractionDataset, Split, REProcessor
+from .relation_extraction_classification import BertForRelationExtraction 
+from .utils import RelationExtractionDataset, Split, REProcessor
 
 import sys
 sys.path.append('..')
@@ -109,10 +109,9 @@ def main():
 
     try:
         task = data_args.task_name.lower()
-        if task in ["chemprot", "ddi"]:
+        ignore_first = True
+        if task not in ["gad", "hoc", "jnlpba"]:
             ignore_first = False
-        if task in ["gad"]:
-            ignore_first = True
         processor = REProcessor(ignore_first)
         train_text = processor._read_tsv(os.path.join(data_args.data_dir, "train.tsv"), ignore_first)
         label_list = processor._find_labels(train_text)
@@ -164,14 +163,163 @@ def main():
     tokenizer.add_tokens(marker_list)
     model.resize_token_embeddings(len(tokenizer))
 
-    from sklearn.metrics import f1_score
-    def compute_metrics_micro_f1(p: EvalPrediction) -> Dict:
-        pred = p.predictions
-        if type(pred) is tuple:
-            pred = pred[0]
-        pred = np.argmax(pred, axis=1)
-        f1 = f1_score(p.label_ids, pred, average='micro', labels=list(range(len(label_list)))[1:])
-        return {"f1": f1}
+    from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+    )
+    
+    def compute_metrics_universal(p) -> Dict:
+        out: Dict = {}
+    
+        raw_pred = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+        pred = np.asarray(raw_pred)
+        labels = np.asarray(p.label_ids)
+    
+        out["pred_shape"] = tuple(pred.shape)
+        out["labels_shape"] = tuple(labels.shape)
+    
+        if pred.ndim == 1:
+            y_pred = (pred > 0).astype(int)
+            out["pred_interpretation"] = "binary_single_score_threshold_0"
+        elif pred.ndim == 2 and pred.shape[1] == 1:
+            y_pred = (pred[:, 0] > 0).astype(int)
+            out["pred_interpretation"] = "binary_single_score_column_threshold_0"
+        else:
+            y_pred = np.argmax(pred, axis=1)
+            out["pred_interpretation"] = "multiclass_argmax"
+    
+        out["y_pred_unique"] = [int(x) for x in np.unique(y_pred)]
+        out["labels_unique"] = [int(x) for x in np.unique(labels)]
+    
+        unique_labels = np.unique(np.concatenate([labels, y_pred]))
+        cm_labels = np.sort(unique_labels)
+        n_classes = cm_labels.size
+        out["observed_classes"] = [int(x) for x in unique_labels]
+        out["cm_labels"] = [int(x) for x in cm_labels]
+        out["n_classes"] = int(n_classes)
+    
+        acc = accuracy_score(labels, y_pred)
+        prec_micro = precision_score(labels, y_pred, average="micro", zero_division=0)
+        rec_micro = recall_score(labels, y_pred, average="micro", zero_division=0)
+        f1_micro = f1_score(labels, y_pred, average="micro", zero_division=0)
+    
+        prec_macro = precision_score(labels, y_pred, average="macro", zero_division=0)
+        rec_macro = recall_score(labels, y_pred, average="macro", zero_division=0)
+        f1_macro = f1_score(labels, y_pred, average="macro", zero_division=0)
+    
+        prec_w = precision_score(labels, y_pred, average="weighted", zero_division=0)
+        rec_w = recall_score(labels, y_pred, average="weighted", zero_division=0)
+        f1_w = f1_score(labels, y_pred, average="weighted", zero_division=0)
+    
+        out.update({
+            "accuracy": acc,
+            "precision_micro": prec_micro,
+            "recall_micro": rec_micro,
+            "f1_micro": f1_micro,
+            "precision_macro": prec_macro,
+            "recall_macro": rec_macro,
+            "f1_macro": f1_macro,
+            "precision_weighted": prec_w,
+            "recall_weighted": rec_w,
+            "f1_weighted": f1_w,
+            "micro_minus_accuracy": float(f1_micro - acc)
+        })
+    
+        cm = confusion_matrix(labels, y_pred, labels=cm_labels)
+        for i, li in enumerate(cm_labels):
+            for j, lj in enumerate(cm_labels):
+                out[f"cm_{li}_{lj}"] = int(cm[i, j])
+    
+        row_sums = cm.sum(axis=1)
+        col_sums = cm.sum(axis=0)
+        for i, li in enumerate(cm_labels):
+            out[f"support_true_{li}"] = int(row_sums[i])
+        for j, lj in enumerate(cm_labels):
+            out[f"count_pred_{lj}"] = int(col_sums[j])
+    
+        never_predicted = [int(cm_labels[j]) for j in range(len(cm_labels)) if col_sums[j] == 0]
+        out["never_predicted_classes"] = never_predicted
+    
+        maj_idx = int(np.argmax(row_sums))
+        maj_class = int(cm_labels[maj_idx])
+        maj_acc = float(row_sums[maj_idx] / row_sums.sum()) if row_sums.sum() > 0 else 0.0
+        out["majority_class"] = maj_class
+        out["majority_baseline_accuracy"] = maj_acc
+        out["beats_majority_baseline"] = bool(acc >= maj_acc)
+    
+        def name_for(cid: int) -> str:
+            pretty = None
+            try:
+                pretty = p.model.config.id2label.get(int(cid))
+            except Exception:
+                pass
+            return str(pretty) if pretty is not None else str(cid)
+    
+        try:
+            id2label = getattr(p.model.config, "id2label", None)
+            label2id = getattr(p.model.config, "label2id", None)
+            if isinstance(id2label, dict):
+                out["config_id2label"] = {str(k): str(v) for k, v in id2label.items()}
+            if isinstance(label2id, dict):
+                out["config_label2id"] = {str(k): int(v) for k, v in label2id.items()}
+        except Exception:
+            pass
+    
+        if n_classes == 2:
+            pos_label = int(cm_labels.max())
+            if cm_labels[0] != pos_label:
+                neg_label = int(cm_labels[0])
+            else:
+                neg_label = int(cm_labels[1])
+    
+            pos_idx = int(np.where(cm_labels == pos_label)[0][0])
+            neg_idx = int(np.where(cm_labels == neg_label)[0][0])
+    
+            tp = int(cm[pos_idx, pos_idx])
+            tn = int(cm[neg_idx, neg_idx])
+            fp = int(cm[neg_idx, pos_idx])
+            fn = int(cm[pos_idx, neg_idx])
+    
+            out.update({"tp": tp, "fp": fp, "tn": tn, "fn": fn})
+    
+            prec_c = precision_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            rec_c = recall_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            f1_c = f1_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            for i, cid in enumerate(cm_labels):
+                cls = name_for(int(cid))
+                out[f"precision_{cls}"] = float(prec_c[i])
+                out[f"recall_{cls}"] = float(rec_c[i])
+                out[f"f1_{cls}"] = float(f1_c[i])
+    
+        else:
+            tp_vec = np.diag(cm)
+            fp_vec = cm.sum(axis=0) - tp_vec
+            fn_vec = cm.sum(axis=1) - tp_vec
+            tn_vec = cm.sum() - (tp_vec + fp_vec + fn_vec)
+    
+            out.update({
+                "tp_micro_sum": int(tp_vec.sum()),
+                "fp_micro_sum": int(fp_vec.sum()),
+                "fn_micro_sum": int(fn_vec.sum()),
+                "tn_micro_sum": int(tn_vec.sum()),
+            })
+    
+            for idx, cid in enumerate(cm_labels):
+                cls = name_for(int(cid))
+                out[f"tp_{cls}"] = int(tp_vec[idx])
+                out[f"fp_{cls}"] = int(fp_vec[idx])
+                out[f"fn_{cls}"] = int(fn_vec[idx])
+                out[f"tn_{cls}"] = int(tn_vec[idx])
+    
+            prec_c = precision_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            rec_c = recall_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            f1_c = f1_score(labels, y_pred, average=None, labels=cm_labels, zero_division=0)
+            for i, cid in enumerate(cm_labels):
+                cls = name_for(int(cid))
+                out[f"precision_{cls}"] = float(prec_c[i])
+                out[f"recall_{cls}"] = float(rec_c[i])
+                out[f"f1_{cls}"] = float(f1_c[i])
+    
+        return out
 
     # Initialize our Trainer
     trainer = Trainer(
@@ -179,7 +327,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        compute_metrics=compute_metrics_micro_f1,
+        compute_metrics=compute_metrics_universal,
     )
 
     # Training

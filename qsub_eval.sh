@@ -26,7 +26,7 @@ which python
 echo '========'
 echo 'Run eval'
 echo '========'
-python -u -m RE.run \
+python -u -m relation_extraction.run \
   --task_name "DDI" \
   --data_dir "data/DDI/" \
   --model_name_or_path "model" \
