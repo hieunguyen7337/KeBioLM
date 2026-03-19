@@ -15,7 +15,8 @@ DATA_DIR="${DATA_DIR:-data/Unified_PPI_binary}"
 OUTPUT_DIR="${OUTPUT_DIR:-evaluation_result/Unified_PPI_binary}"
 TASK_NAME="${TASK_NAME:-unified_ppi}"
 MAX_SEQ_LENGTH="${MAX_SEQ_LENGTH:-256}"
-EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-16}"
+EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-4}"
+EVAL_ACCUMULATION_STEPS="${EVAL_ACCUMULATION_STEPS:-1}"
 CONDA_ENV_NAME="${CONDA_ENV_NAME:-kebiolm_py38}"
 RUN_DEBUG="${RUN_DEBUG:-1}"
 
@@ -26,6 +27,7 @@ export OUTPUT_DIR
 export TASK_NAME
 export MAX_SEQ_LENGTH
 export EVAL_BATCH_SIZE
+export EVAL_ACCUMULATION_STEPS
 export CONDA_ENV_NAME
 export RUN_DEBUG
 
@@ -206,6 +208,7 @@ python -u -m relation_extraction.run \
   --do_eval --do_predict \
   --max_seq_length "${MAX_SEQ_LENGTH}" \
   --per_device_eval_batch_size "${EVAL_BATCH_SIZE}" \
+  --eval_accumulation_steps "${EVAL_ACCUMULATION_STEPS}" \
   --overwrite_output_dir \
   --overwrite_cache
 
