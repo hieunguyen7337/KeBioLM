@@ -1,0 +1,128 @@
+================================================
+CWD = /mnt/hpccs01/home/n12194778/KeBioLM
+================================================
+==========
+Activate conda env
+==========
+Wed Oct  1 01:38:09 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.82.07              Driver Version: 580.82.07      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:2F:00.0 Off |                    0 |
+| N/A   38C    P0             68W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/home/n12194778/miniconda3/envs/kebiolm_py38/bin/python
+========
+Run eval
+========
+10/01/2025 01:38:12 - WARNING - __main__ -   Process rank: -1, device: cuda:0, n_gpu: 0, distributed training: False, 16-bits training: False
+10/01/2025 01:38:12 - INFO - __main__ -   Training/evaluation parameters TrainingArguments(output_dir='evaluation_result/DDI', overwrite_output_dir=True, do_train=False, do_eval=True, do_predict=False, evaluate_during_training=False, evaluation_strategy=<EvaluationStrategy.NO: 'no'>, prediction_loss_only=False, per_device_train_batch_size=8, per_device_eval_batch_size=16, per_gpu_train_batch_size=None, per_gpu_eval_batch_size=None, gradient_accumulation_steps=1, eval_accumulation_steps=None, learning_rate=5e-05, weight_decay=0.0, adam_beta1=0.9, adam_beta2=0.999, adam_epsilon=1e-08, max_grad_norm=1.0, num_train_epochs=3.0, max_steps=-1, warmup_steps=0, logging_dir='runs/Oct01_01-38-12_gpu0n002', logging_first_step=False, logging_steps=500, save_steps=500, save_total_limit=None, no_cuda=False, seed=42, fp16=False, fp16_opt_level='O1', local_rank=-1, tpu_num_cores=None, tpu_metrics_debug=False, debug=False, dataloader_drop_last=False, eval_steps=500, dataloader_num_workers=0, past_index=-1, run_name='evaluation_result/DDI', disable_tqdm=False, remove_unused_columns=True, label_names=None, load_best_model_at_end=False, metric_for_best_model=None, greater_is_better=None)
+Some weights of the model checkpoint at model were not used when initializing KebioForRelationExtraction: ['cls.predictions.bias', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.decoder.weight', 'cls.predictions.decoder.bias']
+- This IS expected if you are initializing KebioForRelationExtraction from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPretraining model).
+- This IS NOT expected if you are initializing KebioForRelationExtraction from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of KebioForRelationExtraction were not initialized from the model checkpoint at model and are newly initialized: ['classifier.weight', 'classifier.bias']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+10/01/2025 01:38:15 - INFO - RE.utils -   Creating features from dataset file at data/DDI/
+10/01/2025 01:38:15 - INFO - RE.utils -   LOOKING AT data/DDI/ dev
+10/01/2025 01:38:15 - INFO - RE.utils -   Training examples: 2496
+convert examples to features: 0it [00:00, ?it/s]10/01/2025 01:38:15 - INFO - RE.utils -   Writing example 0 of 2496
+convert examples to features: 202it [00:00, 2019.50it/s]convert examples to features: 404it [00:00, 1710.80it/s]convert examples to features: 579it [00:00, 1377.89it/s]convert examples to features: 738it [00:00, 1444.13it/s]convert examples to features: 938it [00:00, 1618.35it/s]convert examples to features: 1168it [00:00, 1826.54it/s]convert examples to features: 1357it [00:00, 1767.56it/s]convert examples to features: 1558it [00:00, 1834.66it/s]convert examples to features: 1752it [00:01, 1864.23it/s]convert examples to features: 1969it [00:01, 1953.91it/s]convert examples to features: 2176it [00:01, 1984.28it/s]convert examples to features: 2376it [00:01, 1917.50it/s]convert examples to features: 2496it [00:01, 1825.06it/s]
+10/01/2025 01:38:17 - INFO - RE.utils -   *** Example ***
+10/01/2025 01:38:17 - INFO - RE.utils -   feature: InputFeatures(example_id='DDI-MedLine.d119.s1.p0-dev', input_ids=[2, 28895, 1744, 1680, 2389, 28895, 1701, 1765, 9652, 1725, 2121, 2167, 15, 1690, 2029, 2030, 2801, 9381, 1682, 5096, 3709, 13228, 17, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], attention_mask=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], token_type_ids=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], first_entity_position=1, second_entity_position=5, label=0)
+10/01/2025 01:38:17 - INFO - RE.utils -   *** Example ***
+10/01/2025 01:38:17 - INFO - RE.utils -   feature: InputFeatures(example_id='DDI-MedLine.d119.s2.p0-dev', input_ids=[2, 2021, 1744, 11031, 4324, 1814, 1680, 2187, 4905, 3367, 28895, 11, 28895, 15, 18236, 15, 1690, 28204, 12, 15, 4596, 1701, 4720, 18748, 23536, 2270, 1739, 1750, 1778, 3151, 3403, 1701, 1680, 2187, 3914, 1685, 1805, 2726, 17, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], attention_mask=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], token_type_ids=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], first_entity_position=10, second_entity_position=12, label=0)
+10/01/2025 01:38:17 - INFO - RE.utils -   Saving features into cached file data/DDI/cached_dev_BertTokenizer_256_ddi_28895
+10/01/2025 01:38:18 - INFO - __main__ -   *** Evaluate ***
+  0%|          | 0/156 [00:00<?, ?it/s]  2%|▏         | 3/156 [00:00<00:06, 22.55it/s]  4%|▍         | 6/156 [00:00<00:08, 17.72it/s]  5%|▌         | 8/156 [00:00<00:08, 17.25it/s]  6%|▋         | 10/156 [00:00<00:08, 16.56it/s]  8%|▊         | 12/156 [00:00<00:08, 16.61it/s]  9%|▉         | 14/156 [00:00<00:08, 16.63it/s] 10%|█         | 16/156 [00:00<00:08, 16.47it/s] 12%|█▏        | 18/156 [00:01<00:08, 16.59it/s] 13%|█▎        | 20/156 [00:01<00:08, 16.40it/s] 14%|█▍        | 22/156 [00:01<00:08, 15.55it/s] 15%|█▌        | 24/156 [00:01<00:08, 15.02it/s] 17%|█▋        | 26/156 [00:01<00:08, 14.54it/s] 18%|█▊        | 28/156 [00:01<00:08, 14.32it/s] 19%|█▉        | 30/156 [00:01<00:08, 14.14it/s] 21%|██        | 32/156 [00:02<00:08, 14.02it/s] 22%|██▏       | 34/156 [00:02<00:08, 13.90it/s] 23%|██▎       | 36/156 [00:02<00:08, 14.09it/s] 24%|██▍       | 38/156 [00:02<00:08, 14.50it/s] 26%|██▌       | 40/156 [00:02<00:07, 14.78it/s] 27%|██▋       | 42/156 [00:02<00:07, 15.06it/s] 28%|██▊       | 44/156 [00:02<00:07, 15.20it/s] 29%|██▉       | 46/156 [00:02<00:07, 15.03it/s] 31%|███       | 48/156 [00:03<00:07, 15.30it/s] 32%|███▏      | 50/156 [00:03<00:06, 15.26it/s] 33%|███▎      | 52/156 [00:03<00:06, 15.38it/s] 35%|███▍      | 54/156 [00:03<00:06, 15.56it/s] 36%|███▌      | 56/156 [00:03<00:06, 15.63it/s] 37%|███▋      | 58/156 [00:03<00:06, 15.76it/s] 38%|███▊      | 60/156 [00:03<00:06, 15.45it/s] 40%|███▉      | 62/156 [00:04<00:05, 15.68it/s] 41%|████      | 64/156 [00:04<00:05, 15.62it/s] 42%|████▏     | 66/156 [00:04<00:05, 15.84it/s] 44%|████▎     | 68/156 [00:04<00:05, 15.76it/s] 45%|████▍     | 70/156 [00:04<00:05, 15.71it/s] 46%|████▌     | 72/156 [00:04<00:05, 15.83it/s] 47%|████▋     | 74/156 [00:04<00:05, 15.74it/s] 49%|████▊     | 76/156 [00:04<00:05, 15.69it/s] 50%|█████     | 78/156 [00:05<00:05, 15.20it/s] 51%|█████▏    | 80/156 [00:05<00:05, 15.20it/s] 53%|█████▎    | 82/156 [00:05<00:04, 15.15it/s] 54%|█████▍    | 84/156 [00:05<00:04, 15.25it/s] 55%|█████▌    | 86/156 [00:05<00:04, 15.39it/s] 56%|█████▋    | 88/156 [00:05<00:04, 15.49it/s] 58%|█████▊    | 90/156 [00:05<00:04, 15.58it/s] 59%|█████▉    | 92/156 [00:05<00:04, 15.54it/s] 60%|██████    | 94/156 [00:06<00:04, 15.40it/s] 62%|██████▏   | 96/156 [00:06<00:04, 12.66it/s] 63%|██████▎   | 98/156 [00:06<00:04, 13.23it/s] 64%|██████▍   | 100/156 [00:06<00:04, 13.62it/s] 65%|██████▌   | 102/156 [00:06<00:03, 14.00it/s] 67%|██████▋   | 104/156 [00:06<00:03, 14.24it/s] 68%|██████▊   | 106/156 [00:06<00:03, 14.59it/s] 69%|██████▉   | 108/156 [00:07<00:03, 14.84it/s] 71%|███████   | 110/156 [00:07<00:03, 14.06it/s] 72%|███████▏  | 112/156 [00:07<00:03, 14.35it/s] 73%|███████▎  | 114/156 [00:07<00:02, 14.17it/s] 74%|███████▍  | 116/156 [00:07<00:02, 14.20it/s] 76%|███████▌  | 118/156 [00:07<00:02, 13.42it/s] 77%|███████▋  | 120/156 [00:08<00:02, 12.80it/s] 78%|███████▊  | 122/156 [00:08<00:02, 13.36it/s] 79%|███████▉  | 124/156 [00:08<00:02, 11.60it/s] 81%|████████  | 126/156 [00:08<00:02, 11.29it/s] 82%|████████▏ | 128/156 [00:08<00:02, 10.95it/s] 83%|████████▎ | 130/156 [00:08<00:02, 11.93it/s] 85%|████████▍ | 132/156 [00:09<00:01, 12.56it/s] 86%|████████▌ | 134/156 [00:09<00:02,  8.72it/s] 87%|████████▋ | 136/156 [00:09<00:02,  9.89it/s] 88%|████████▊ | 138/156 [00:09<00:01, 10.96it/s] 90%|████████▉ | 140/156 [00:09<00:01, 11.84it/s] 91%|█████████ | 142/156 [00:09<00:01, 12.48it/s] 92%|█████████▏| 144/156 [00:10<00:00, 13.01it/s] 94%|█████████▎| 146/156 [00:10<00:00, 12.10it/s] 95%|█████████▍| 148/156 [00:10<00:00,  9.01it/s] 96%|█████████▌| 150/156 [00:10<00:00, 10.10it/s] 97%|█████████▋| 152/156 [00:11<00:00,  9.10it/s] 99%|█████████▊| 154/156 [00:11<00:00,  9.14it/s]100%|██████████| 156/156 [00:11<00:00,  9.54it/s]/home/n12194778/miniconda3/envs/kebiolm_py38/lib/python3.8/site-packages/transformers/trainer.py:1118: FutureWarning: This method is deprecated, use `Trainer.is_world_process_zero()` instead.
+  warnings.warn("This method is deprecated, use `Trainer.is_world_process_zero()` instead.", FutureWarning)
+10/01/2025 01:38:31 - INFO - __main__ -   ***** Eval results *****
+10/01/2025 01:38:31 - INFO - __main__ -     eval_loss = 1.170721411705017
+10/01/2025 01:38:31 - INFO - __main__ -     eval_accuracy = 0.7840544871794872
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_micro = 0.7840544871794872
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_micro = 0.7840544871794872
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_micro = 0.7840544871794872
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_macro = 0.16776893243519087
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_macro = 0.19685630131834103
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_macro = 0.18079234936487543
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_weighted = 0.6588589916963692
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_weighted = 0.7840544871794872
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_weighted = 0.7159506465361334
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_0_0 = 1955
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_0_1 = 66
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_0_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_0_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_0_4 = 6
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_1_0 = 94
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_1_1 = 2
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_1_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_1_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_1_4 = 5
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_2_0 = 199
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_2_1 = 1
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_2_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_2_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_2_4 = 1
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_3_0 = 10
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_3_1 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_3_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_3_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_3_4 = 1
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_4_0 = 156
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_4_1 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_4_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_4_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_cm_4_4 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_micro_sum = 1957
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_micro_sum = 539
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_micro_sum = 539
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_micro_sum = 9445
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_0 = 1955
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_0 = 459
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_0 = 72
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_0 = 10
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_1 = 2
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_1 = 67
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_1 = 99
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_1 = 2328
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_2 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_2 = 201
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_2 = 2295
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_3 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_3 = 11
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_3 = 2485
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tp_4 = 0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fp_4 = 13
+10/01/2025 01:38:31 - INFO - __main__ -     eval_fn_4 = 156
+10/01/2025 01:38:31 - INFO - __main__ -     eval_tn_4 = 2327
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_0 = 0.8098591549295775
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_0 = 0.9644795263936853
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_0 = 0.8804323350596712
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_1 = 0.028985507246376812
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_1 = 0.019801980198019802
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_1 = 0.023529411764705882
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_2 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_2 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_2 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_3 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_3 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_3 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_precision_4 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_recall_4 = 0.0
+10/01/2025 01:38:31 - INFO - __main__ -     eval_f1_4 = 0.0
+100%|██████████| 156/156 [00:12<00:00, 12.54it/s]
+Done.

@@ -1,0 +1,10 @@
+nltk==3.5
+lxml==4.5.2
+defusedxml==0.6.0
+python-docx==0.8.10
+unrar==0.4
+zipp==2.2.0
+protobuf==3.20.3
+torch==1.7.0
+transformers==3.4.0
+scikit-learn==1.0.2

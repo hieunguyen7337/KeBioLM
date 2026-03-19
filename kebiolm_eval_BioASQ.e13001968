@@ -1,0 +1,63 @@
+================================================
+CWD = /mnt/hpccs01/home/n12194778/KeBioLM
+================================================
+==========
+Activate conda env
+==========
+Wed Oct  1 01:11:45 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.82.07              Driver Version: 580.82.07      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:2F:00.0 Off |                    0 |
+| N/A   37C    P0             68W /  500W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/home/n12194778/miniconda3/envs/kebiolm_py38/bin/python
+========
+Run eval
+========
+10/01/2025 01:11:48 - WARNING - __main__ -   Process rank: -1, device: cuda:0, n_gpu: 0, distributed training: False, 16-bits training: False
+10/01/2025 01:11:48 - INFO - __main__ -   Training/evaluation parameters TrainingArguments(output_dir='evaluation_result/BioASQ', overwrite_output_dir=True, do_train=False, do_eval=True, do_predict=False, evaluate_during_training=False, evaluation_strategy=<EvaluationStrategy.NO: 'no'>, prediction_loss_only=False, per_device_train_batch_size=8, per_device_eval_batch_size=16, per_gpu_train_batch_size=None, per_gpu_eval_batch_size=None, gradient_accumulation_steps=1, eval_accumulation_steps=None, learning_rate=5e-05, weight_decay=0.0, adam_beta1=0.9, adam_beta2=0.999, adam_epsilon=1e-08, max_grad_norm=1.0, num_train_epochs=3.0, max_steps=-1, warmup_steps=0, logging_dir='runs/Oct01_01-11-48_gpu0n002', logging_first_step=False, logging_steps=500, save_steps=500, save_total_limit=None, no_cuda=False, seed=42, fp16=False, fp16_opt_level='O1', local_rank=-1, tpu_num_cores=None, tpu_metrics_debug=False, debug=False, dataloader_drop_last=False, eval_steps=500, dataloader_num_workers=0, past_index=-1, run_name='evaluation_result/BioASQ', disable_tqdm=False, remove_unused_columns=True, label_names=None, load_best_model_at_end=False, metric_for_best_model=None, greater_is_better=None)
+Some weights of the model checkpoint at model were not used when initializing KebioForRelationExtraction: ['cls.predictions.bias', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.decoder.weight', 'cls.predictions.decoder.bias']
+- This IS expected if you are initializing KebioForRelationExtraction from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPretraining model).
+- This IS NOT expected if you are initializing KebioForRelationExtraction from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of KebioForRelationExtraction were not initialized from the model checkpoint at model and are newly initialized: ['classifier.weight', 'classifier.bias']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+10/01/2025 01:11:50 - INFO - RE.utils -   Loading features from cached file data/BioASQ/cached_dev_BertTokenizer_256_bioasq_28895
+10/01/2025 01:11:51 - INFO - __main__ -   *** Evaluate ***
+  0%|          | 0/5 [00:00<?, ?it/s] 60%|██████    | 3/5 [00:00<00:00, 24.10it/s]/home/n12194778/miniconda3/envs/kebiolm_py38/lib/python3.8/site-packages/transformers/trainer.py:1118: FutureWarning: This method is deprecated, use `Trainer.is_world_process_zero()` instead.
+  warnings.warn("This method is deprecated, use `Trainer.is_world_process_zero()` instead.", FutureWarning)
+10/01/2025 01:11:52 - INFO - __main__ -   ***** Eval results *****
+10/01/2025 01:11:52 - INFO - __main__ -     eval_loss = 0.6582692265510559
+10/01/2025 01:11:52 - INFO - __main__ -     eval_accuracy = 0.6933333333333334
+10/01/2025 01:11:52 - INFO - __main__ -     eval_precision_micro = 0.6933333333333334
+10/01/2025 01:11:52 - INFO - __main__ -     eval_recall_micro = 0.6933333333333334
+10/01/2025 01:11:52 - INFO - __main__ -     eval_f1_micro = 0.6933333333333334
+10/01/2025 01:11:52 - INFO - __main__ -     eval_precision_macro = 0.5321637426900585
+10/01/2025 01:11:52 - INFO - __main__ -     eval_recall_macro = 0.5409429280397022
+10/01/2025 01:11:52 - INFO - __main__ -     eval_f1_macro = 0.5323936026023313
+10/01/2025 01:11:52 - INFO - __main__ -     eval_precision_weighted = 0.7346588693957115
+10/01/2025 01:11:52 - INFO - __main__ -     eval_recall_weighted = 0.6933333333333334
+10/01/2025 01:11:52 - INFO - __main__ -     eval_f1_weighted = 0.7116219390982199
+10/01/2025 01:11:52 - INFO - __main__ -     eval_cm_0_0 = 4
+10/01/2025 01:11:52 - INFO - __main__ -     eval_cm_0_1 = 9
+10/01/2025 01:11:52 - INFO - __main__ -     eval_cm_1_0 = 14
+10/01/2025 01:11:52 - INFO - __main__ -     eval_cm_1_1 = 48
+10/01/2025 01:11:52 - INFO - __main__ -     eval_tp = 48
+10/01/2025 01:11:52 - INFO - __main__ -     eval_fp = 9
+10/01/2025 01:11:52 - INFO - __main__ -     eval_tn = 4
+10/01/2025 01:11:52 - INFO - __main__ -     eval_fn = 14
+100%|██████████| 5/5 [00:00<00:00, 18.50it/s]
+Done.

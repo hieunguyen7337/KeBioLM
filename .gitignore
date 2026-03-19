@@ -1,0 +1,33 @@
+# --- Data and Large Files ---
+# Ignore the massive datasets and raw inputs
+raw_data/
+data/
+# probe/
+probe/build_index.csv
+
+# # --- Logs and Cluster Output ---
+# # Ignores the job output files (e.g., kebiolm_eval_BioASQ.e13001968)
+# kebiolm_eval_*
+# *.e[0-9]*
+# *.o[0-9]*
+# evaluation_result/
+
+# --- Python Specific ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# --- Local Models & Artifacts ---
+# Usually, you don't want to commit the actual model weights (238K now, but will grow)
+# model/
+model/KeBioLM.zip
+model/pytorch_model.bin
+
+# --- OS & IDE ---
+.DS_Store
+.vscode/
+.idea/
