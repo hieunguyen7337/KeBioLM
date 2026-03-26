@@ -32,6 +32,10 @@ The base checkpoint is expected under `model/`, including:
 - `vocab.txt`
 - `entity.jsonl`
 
+Pretrained model link:
+
+- [Google Drive checkpoint](https://drive.google.com/file/d/1kMbTsc9rPpBc-6ezEHjMbQLljW3SUWG9/edit)
+
 Important: the base checkpoint in `model/` is not a task-specific relation extraction classifier.  
 If you evaluate directly from `model/`, the classifier head is newly initialized, so results are only sanity-check baselines.
 
