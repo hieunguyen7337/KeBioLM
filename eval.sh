@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#PBS -N kebiolm_eval_unified_ppi
+#PBS -N kebiolm_eval_phos_binary
 #PBS -l walltime=10:00:00
 #PBS -l mem=64gb
 #PBS -l ncpus=1
@@ -11,9 +11,9 @@ set -euo pipefail
 
 ROOT_DIR="${PBS_O_WORKDIR:-$(cd "$(dirname "$0")" && pwd)}"
 MODEL_PATH="${MODEL_PATH:-model}"
-DATA_DIR="${DATA_DIR:-data/Unified_PPI_binary}"
-OUTPUT_DIR="${OUTPUT_DIR:-evaluation_result/Unified_PPI_binary}"
-TASK_NAME="${TASK_NAME:-unified_ppi}"
+DATA_DIR="${DATA_DIR:-data/Phos_binary}"
+OUTPUT_DIR="${OUTPUT_DIR:-evaluation_result/Phos_binary}"
+TASK_NAME="${TASK_NAME:-phos_binary}"
 MAX_SEQ_LENGTH="${MAX_SEQ_LENGTH:-256}"
 EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-4}"
 EVAL_ACCUMULATION_STEPS="${EVAL_ACCUMULATION_STEPS:-1}"
@@ -128,7 +128,7 @@ except Exception as exc:
 EOF
 
   echo '=========='
-  echo 'Debug: Unified_PPI_binary dataset'
+  echo 'Debug: Phos_binary dataset'
   echo '=========='
   echo "DATA_DIR = ${DATA_DIR}"
   echo "MODEL_PATH = ${MODEL_PATH}"
