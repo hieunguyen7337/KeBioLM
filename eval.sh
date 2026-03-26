@@ -19,6 +19,9 @@ EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-4}"
 EVAL_ACCUMULATION_STEPS="${EVAL_ACCUMULATION_STEPS:-1}"
 CONDA_ENV_NAME="${CONDA_ENV_NAME:-kebiolm_py38}"
 RUN_DEBUG="${RUN_DEBUG:-0}"
+DO_EVAL="${DO_EVAL:-1}"
+DO_PREDICT="${DO_PREDICT:-0}"
+OVERWRITE_CACHE="${OVERWRITE_CACHE:-0}"
 
 export ROOT_DIR
 export MODEL_PATH
@@ -30,6 +33,9 @@ export EVAL_BATCH_SIZE
 export EVAL_ACCUMULATION_STEPS
 export CONDA_ENV_NAME
 export RUN_DEBUG
+export DO_EVAL
+export DO_PREDICT
+export OVERWRITE_CACHE
 
 echo '================================================'
 echo "CWD = ${ROOT_DIR}"
@@ -63,6 +69,10 @@ echo "CUDA_DIR=${CUDA_DIR:-}"
 echo "XLA_FLAGS=${XLA_FLAGS:-}"
 echo "TF_XLA_FLAGS=${TF_XLA_FLAGS}"
 echo "TF_FORCE_GPU_ALLOW_GROWTH=${TF_FORCE_GPU_ALLOW_GROWTH}"
+echo "RUN_DEBUG=${RUN_DEBUG}"
+echo "DO_EVAL=${DO_EVAL}"
+echo "DO_PREDICT=${DO_PREDICT}"
+echo "OVERWRITE_CACHE=${OVERWRITE_CACHE}"
 
 echo '=========='
 echo 'Activate conda env'
@@ -200,16 +210,29 @@ fi
 echo '========'
 echo 'Run eval'
 echo '========'
-python -u -m relation_extraction.run \
-  --task_name "${TASK_NAME}" \
-  --data_dir "${DATA_DIR}" \
-  --model_name_or_path "${MODEL_PATH}" \
-  --output_dir "${OUTPUT_DIR}" \
-  --do_eval --do_predict \
-  --max_seq_length "${MAX_SEQ_LENGTH}" \
-  --per_device_eval_batch_size "${EVAL_BATCH_SIZE}" \
-  --eval_accumulation_steps "${EVAL_ACCUMULATION_STEPS}" \
-  --overwrite_output_dir \
-  --overwrite_cache
+ARGS=(
+  --task_name "${TASK_NAME}"
+  --data_dir "${DATA_DIR}"
+  --model_name_or_path "${MODEL_PATH}"
+  --output_dir "${OUTPUT_DIR}"
+  --max_seq_length "${MAX_SEQ_LENGTH}"
+  --per_device_eval_batch_size "${EVAL_BATCH_SIZE}"
+  --eval_accumulation_steps "${EVAL_ACCUMULATION_STEPS}"
+  --overwrite_output_dir
+)
+
+if [ "${DO_EVAL}" = "1" ]; then
+  ARGS+=(--do_eval)
+fi
+
+if [ "${DO_PREDICT}" = "1" ]; then
+  ARGS+=(--do_predict)
+fi
+
+if [ "${OVERWRITE_CACHE}" = "1" ]; then
+  ARGS+=(--overwrite_cache)
+fi
+
+python -u -m relation_extraction.run "${ARGS[@]}"
 
 echo 'Done.'
