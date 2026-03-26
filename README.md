@@ -85,6 +85,33 @@ run.py \
 ```
 Since DDI, ChemProt and GAD dataset have different formats and labels, we should specific `--task_name ddi/chemprot/gad`.
 
+## Custom Binary RE Eval Results
+The repository also includes prepared binary relation-extraction datasets for:
+- `data/Unified_PPI_binary`
+- `data/Phos_binary`
+
+These evaluations were run with the base KeBioLM checkpoint in `model/` and the custom eval script in `eval.sh`.
+Because the classifier head is newly initialized from the base checkpoint, these numbers should be treated as sanity-check baselines rather than fine-tuned benchmark results.
+
+| Dataset | Data dir | Result file | Samples | Accuracy | Micro F1 | Macro F1 | Weighted F1 |
+| :-----: | :------: | :---------: | :-----: | :------: | :------: | :------: | :---------: |
+| Unified PPI binary | `data/Unified_PPI_binary` | `evaluation_result/Unified_PPI_binary/eval_results.txt` | 28604 | 0.5333 | 0.5333 | 0.4968 | 0.5402 |
+| Phos binary | `data/Phos_binary` | `evaluation_result/Phos_binary/eval_results.txt` | 1391 | 0.3767 | 0.3767 | 0.3247 | 0.4771 |
+
+Detailed binary confusion counts from the eval outputs:
+
+| Dataset | TP | FP | TN | FN |
+| :-----: | :-: | :-: | :-: | :-: |
+| Unified PPI binary | 11477 | 5946 | 3777 | 7404 |
+| Phos binary | 69 | 806 | 455 | 61 |
+
+Per-class F1 from the eval outputs:
+
+| Dataset | Class 0 F1 | Class 1 F1 |
+| :-----: | :--------: | :--------: |
+| Unified PPI binary | 0.3614 | 0.6323 |
+| Phos binary | 0.5121 | 0.1373 |
+
 ## Hyperparameters for BLURB dataset
 To reproduce the results of our paper, please try training models with following hyperparameters.
 All models are trained for 60 epochs with a 10% steps linear warmup.
