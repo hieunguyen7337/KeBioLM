@@ -1,168 +1,163 @@
 # KeBioLM
 
-Improving Biomedical Pretrained Language Models with Knowledge.
-Accepted by BioNLP 2021.
+Improving Biomedical Pretrained Language Models with Knowledge.  
+Accepted by BioNLP 2021.  
 [Paper](https://arxiv.org/abs/2104.10344)
 
-# Introduction
-![](pic/kebiolm.png)
-KeBioLM: **K**nowledge **e**nhanced **Bio**medical pretrained
-**L**anguage **M**odel
+## Overview
+![KeBioLM architecture](pic/kebiolm.png)
 
-KeBioLM applies text-only encoding layer
-to learn entity representation and applies a
-text-entity fusion encoding to aggregate entity
-representation.
-KeBioLM has three pretraining tasks: 
-- Masked Language Model: Extend whole word masking to whole entity masking.
-- Entity Detection: Predict B/I/O tags for NER.
-- Entity Linking: Link predicted entities to UMLS.
+KeBioLM is a biomedical pretrained language model with knowledge-aware pretraining.  
+This repo currently contains:
 
-# Pre-trained Model
-You can download our model from [Google Drive](https://drive.google.com/file/d/1kMbTsc9rPpBc-6ezEHjMbQLljW3SUWG9).
-Our model contain pre-trained weights `pytorch_model.bin`, a tokenizer `vocab.txt` (same as PubMedBERT) and an entity dictionary for entity linking task in pretraining phase `entity.jsonl`.
+- the original KeBioLM model code
+- relation extraction and NER fine-tuning code
+- prepared binary evaluation datasets for Unified PPI and Phos
+- a single PBS-ready eval script: `eval.sh`
 
-# Environment
-All codes are tested under Python 3.7, PyTorch 1.7.0 and Transformers 3.4.0.
+## Environment
+This codebase was originally tested with:
 
-# Fine-tune KeBioLM for NER and RE
+- Python 3.7
+- PyTorch 1.7.0
+- Transformers 3.4.0
 
-## BLURB Dataset
-Download BLURB dataset from [here](https://microsoft.github.io/BLURB/sample_code/data_generation.tar.gz).
+The current cluster runs in a conda environment selected by `eval.sh`.
 
-## NER
-For example, to fine tune BC5CDR-disease dataset:
-```sh
-cd ner
-CUDA_VISIBLE_DEVICES=0 python \
-run_ner.py \
---data_dir $BC5CDR_DATASET \
---model_name_or_path $KEBIOLM_CHECKPOINT_PATH \
---output_dir $OUTPUT_DIR \
---num_train_epochs 60 \
---do_train --do_eval --do_predict --overwrite_output_dir \
---gradient_accumulation_steps 2 \
---learning_rate 3e-5 \
---warmup_steps 1710 \
---evaluation_strategy epoch \
---max_seq_length 512 \
---per_device_train_batch_size 8 \
---eval_accumulation_steps 1 \
---load_best_model_at_end --metric_for_best_model f1
-```
+## Model Files
+The base checkpoint is expected under `model/`, including:
 
-To use your own task for fine-tuning, please prepare `train.tsv`, `test.tsv` and `dev.tsv` in same folder.
-If your task contain tags more than *B,I,O* like *B-disease, I-disease*, please also provide a label file which contains each label in a line:
-```
-O
-B-disease
-I-disease
-B-symptom
-I-symptom
-```
-And you should pass this label file by `--labels $label_file`.
+- `pytorch_model.bin`
+- `config.json`
+- `vocab.txt`
+- `entity.jsonl`
 
-## RE
-To fine-tune DDI dataset:
-```sh
-cd re
-CUDA_VISIBLE_DEVICES=0 python \
-run.py \
---task_name ddi \
---data_dir $DDI_DATASET \
---model_name_or_path $KEBIOLM_CHECKPOINT_PATH \
---output_dir $OUTPUT_DIR \
---num_train_epochs 60 \
---do_train --do_eval --do_predict --overwrite_output_dir \
---gradient_accumulation_steps 1 \ 
---learning_rate 1e-5 \
---warmup_steps 9486 \
---evaluation_strategy epoch \
---max_seq_length 256 \
---per_device_train_batch_size 16 \
---eval_accumulation_steps 1 \ 
---load_best_model_at_end --metric_for_best_model f1
-```
-Since DDI, ChemProt and GAD dataset have different formats and labels, we should specific `--task_name ddi/chemprot/gad`.
+Important: the base checkpoint in `model/` is not a task-specific relation extraction classifier.  
+If you evaluate directly from `model/`, the classifier head is newly initialized, so results are only sanity-check baselines.
 
-## Custom Binary RE Eval Results
-The repository also includes prepared binary relation-extraction datasets for:
+## Prepared Eval Datasets
+Two binary relation-extraction datasets are already prepared in KeBioLM TSV format:
+
 - `data/Unified_PPI_binary`
 - `data/Phos_binary`
 
-These evaluations were run with the base KeBioLM checkpoint in `model/` and the custom eval script in `eval.sh`.
-Because the classifier head is newly initialized from the base checkpoint, these numbers should be treated as sanity-check baselines rather than fine-tuned benchmark results.
+Each folder contains:
 
-| Dataset | Data dir | Result file | Samples | Accuracy | Micro F1 | Macro F1 | Weighted F1 |
-| :-----: | :------: | :---------: | :-----: | :------: | :------: | :------: | :---------: |
-| Unified PPI binary | `data/Unified_PPI_binary` | `evaluation_result/Unified_PPI_binary/eval_results.txt` | 28604 | 0.5333 | 0.5333 | 0.4968 | 0.5402 |
-| Phos binary | `data/Phos_binary` | `evaluation_result/Phos_binary/eval_results.txt` | 1391 | 0.3767 | 0.3767 | 0.3247 | 0.4771 |
+- `train.tsv`
+- `dev.tsv`
+- `test.tsv`
 
-Detailed binary confusion counts from the eval outputs:
+Each row uses the 3-column KeBioLM RE format:
+
+```tsv
+sample_id<TAB>sentence_with_@E1$_and_@E2$_markers<TAB>label
+```
+
+Binary labels used in these prepared datasets:
+
+- Unified PPI: `Association`, `None`
+- Phos: `Association`, `None`
+
+## How To Run Eval
+The repository uses a single PBS script, [`eval.sh`](F:\document\QUT_research_assistant_file\Dr_Bashar_file\KeBioLM\eval.sh), for evaluation.
+
+Default behavior:
+
+- dataset: `data/Phos_binary`
+- output: `evaluation_result/Phos_binary`
+- task name: `phos_binary`
+- eval only
+- no debug
+- cached features reused unless requested otherwise
+
+Submit the default Phos binary eval with:
+
+```bash
+qsub eval.sh
+```
+
+Useful overrides:
+
+Run Unified PPI instead:
+
+```bash
+qsub -v DATA_DIR=data/Unified_PPI_binary,OUTPUT_DIR=evaluation_result/Unified_PPI_binary,TASK_NAME=unified_ppi eval.sh
+```
+
+Enable the inline debug block:
+
+```bash
+qsub -v RUN_DEBUG=1 eval.sh
+```
+
+Run prediction as well:
+
+```bash
+qsub -v DO_PREDICT=1 eval.sh
+```
+
+Rebuild cached features:
+
+```bash
+qsub -v OVERWRITE_CACHE=1 eval.sh
+```
+
+Use a different checkpoint:
+
+```bash
+qsub -v MODEL_PATH=/path/to/checkpoint eval.sh
+```
+
+Main configurable variables in `eval.sh`:
+
+- `MODEL_PATH`
+- `DATA_DIR`
+- `OUTPUT_DIR`
+- `TASK_NAME`
+- `MAX_SEQ_LENGTH`
+- `EVAL_BATCH_SIZE`
+- `EVAL_ACCUMULATION_STEPS`
+- `RUN_DEBUG`
+- `DO_EVAL`
+- `DO_PREDICT`
+- `OVERWRITE_CACHE`
+- `CONDA_ENV_NAME`
+
+## Eval Outputs
+Evaluation outputs are written under `evaluation_result/<dataset_name>/`.
+
+Typical files:
+
+- `eval_results.txt`
+- `test_results.txt` when `DO_PREDICT=1`
+- cached feature files under the dataset directory
+
+## Current Eval Results
+These are baseline eval results produced from the prepared binary datasets.
+
+| Dataset | Result file | Samples | Accuracy | Micro F1 | Macro F1 | Weighted F1 |
+| :-----: | :---------: | :-----: | :------: | :------: | :------: | :---------: |
+| Unified PPI binary | `evaluation_result/Unified_PPI_binary/eval_results.txt` | 28604 | 0.5333 | 0.5333 | 0.4968 | 0.5402 |
+| Phos binary | `evaluation_result/Phos_binary/eval_results.txt` | 1391 | 0.3767 | 0.3767 | 0.3247 | 0.4771 |
+
+Confusion counts:
 
 | Dataset | TP | FP | TN | FN |
 | :-----: | :-: | :-: | :-: | :-: |
 | Unified PPI binary | 11477 | 5946 | 3777 | 7404 |
 | Phos binary | 69 | 806 | 455 | 61 |
 
-Per-class F1 from the eval outputs:
+Per-class F1 from `eval_results.txt`:
 
 | Dataset | Class 0 F1 | Class 1 F1 |
 | :-----: | :--------: | :--------: |
 | Unified PPI binary | 0.3614 | 0.6323 |
 | Phos binary | 0.5121 | 0.1373 |
 
-## Hyperparameters for BLURB dataset
-To reproduce the results of our paper, please try training models with following hyperparameters.
-All models are trained for 60 epochs with a 10% steps linear warmup.
-
-| Dataset  | Learning rate | Sequence Length | Batch size | Gradient accumulation |
-| :------: | :-----------: | :-------------: | :--------: | :-------------------: |
-| BC5chem  |     3e-5      |       512       |     8      |           2           |
-|  BC5dis  |     1e-5      |       512       |     8      |           2           |
-|   NCBI   |     1e-5      |       512       |     8      |           2           |
-|  BC2GM   |     3e-5      |       512       |     8      |           2           |
-|  JNLPBA  |     1e-5      |       512       |     8      |           2           |
-| ChemProt |     1e-5      |       256       |     16     |           1           |
-|   DDI    |     1e-5      |       256       |     16     |           1           |
-|   GAD    |     1e-5      |       128       |     16     |           1           |
-
-BC2GM, GAD and DDI datasets have relatively higher variance, you can try different seeds by setting `--seed $seed_number`.
-
-# UMLS Knowledge Probing
-For a relation triplet `(s, r, o)` in UMLS, we generate two queries: `[CLS] [MASK] r o [SEP]` and `[CLS] s r [MASK] [SEP]`.
-We request language models to restore the masked entites.
-We collect 143771 queries for 922 relation types.
-
-## Rebuild the dataset
-To rebuild our dataset for UMLS knowledge probing, you should prepare [UMLS2020AA](https://www.nlm.nih.gov/research/umls/licensedcontent/umlsarchives04.html#2020AA) version.
-After installing UMLS2020AA, you should have a folder `$UMLS_DIR` with `MRCONSO.RRF`, `MRREL.RRF`, `MRSTY.RRF`.
-Using `probe/build.py` to rebuild the probing dataset `dataset.txt` based on UMLS LUI and relation.
-```sh
-cd probe
-python build.py $UMLS_DIR
-```
-Rebuilding process will take about 10 minutes.
-
-## Probing
-The default setting of probing is `max_length_of_[MASK] = 10`, `beam_width = 5`.
-To probe `dataset.txt` for SciBERT (or other Bert-based language models):
-```sh
-cd probe
-python beam_batch_decode.py $SCIBERT_PATH dataset.txt
-```
-To probe `dataset.txt` for KeBioLM:
-```sh
-cd probe
-python beam_batch_decode.py $KEBIOLM_CHECKPOINT_PATH dataset.txt
-```
-Probing with `beam_width = 5` will take very long time (over 1 day on V100), you may split `dataset.txt` for using multi GPUs to decode.
-
-To perform evaluation on probing results, using:
-```sh
-cd probe
-python metric.py $predict_file dataset.txt $UMLS_DIR
-```
+## Notes
+- `relation_extraction.run` expects `train.tsv`, `dev.tsv`, and `test.tsv` to exist even for eval-only runs.
+- The KeBioLM RE loader identifies entity positions from the marker tokens in the sentence text.
+- For large datasets, `eval_accumulation_steps` and smaller `per_device_eval_batch_size` help avoid GPU memory issues.
 
 ## Citation
 ```bibtex
@@ -180,7 +175,6 @@ python metric.py $predict_file dataset.txt $UMLS_DIR
     publisher = "Association for Computational Linguistics",
     url = "https://aclanthology.org/2021.bionlp-1.20",
     doi = "10.18653/v1/2021.bionlp-1.20",
-    pages = "180--190",
-    abstract = "Pretrained language models have shown success in many natural language processing tasks. Many works explore to incorporate the knowledge into the language models. In the biomedical domain, experts have taken decades of effort on building large-scale knowledge bases. For example, UMLS contains millions of entities with their synonyms and defines hundreds of relations among entities. Leveraging this knowledge can benefit a variety of downstream tasks such as named entity recognition and relation extraction. To this end, we propose KeBioLM, a biomedical pretrained language model that explicitly leverages knowledge from the UMLS knowledge bases. Specifically, we extract entities from PubMed abstracts and link them to UMLS. We then train a knowledge-aware language model that firstly applies a text-only encoding layer to learn entity representation and then applies a text-entity fusion encoding to aggregate entity representation. In addition, we add two training objectives as entity detection and entity linking. Experiments on the named entity recognition and relation extraction tasks from the BLURB benchmark demonstrate the effectiveness of our approach. Further analysis on a collected probing dataset shows that our model has better ability to model medical knowledge.",
+    pages = "180--190"
 }
 ```
